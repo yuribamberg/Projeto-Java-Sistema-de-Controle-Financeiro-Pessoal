@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Locale;
+
 public class App {
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        scanner.useLocale(Locale.US); 
 
         int opcao;
 
@@ -18,13 +21,14 @@ public class App {
             System.out.println("2 - Cadastrar Despesa");
             System.out.println("3 - Listar Transações");
             System.out.println("4 - Relatórios");
+            System.out.println("5 - Consultoria Inteligente 🤖");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
             try { 
                 opcao = scanner.nextInt();
-            } catch (java.util.InputMismatchException e) {
-                System.out.println(" ");
+            } catch (InputMismatchException e) {
+                System.out.println("Opção inválida! Digite um número.");
                 scanner.nextLine();
                 opcao = -1;
             }
@@ -35,7 +39,7 @@ public class App {
                     System.out.print("Descrição: ");
                     String descricao = scanner.nextLine();
 
-                    System.out.print("Valor: ");
+                    System.out.print("Valor (use ponto para centavos): ");
                     double valor = scanner.nextDouble();
 
                     scanner.nextLine();
@@ -54,7 +58,7 @@ public class App {
                     System.out.print("Descrição: ");
                     String descricao = scanner.nextLine();
 
-                    System.out.print("Valor: ");
+                    System.out.print("Valor (use ponto para centavos): ");
                     double valor = scanner.nextDouble();
 
                     scanner.nextLine();
@@ -71,34 +75,69 @@ public class App {
                 case 3: {
                     System.out.println("\n====== Transações ======");
 
-                    if(receitas.size() == 0 && despesas.size() == 0) {
+                    if (receitas.isEmpty() && despesas.isEmpty()) {
                         System.out.println("Nenhuma transação cadastrada!");
                     } else {
-                    for(Receita r : receitas) {
-                        r.ExibirResumo();
-                    }
-                    for(Despesa d : despesas) {
-                        d.ExibirResumo();
-                    }
+                        for (Receita r : receitas) {
+                            r.ExibirResumo();
+                        }
+                        for (Despesa d : despesas) {
+                            d.ExibirResumo();
+                        }
                     }
                     break;
                 }
                 case 4: {
-                    double totalReceitas = 0;
-                    double totalDespesas = 0;
-
-                    for(Receita r : receitas) {
-                        totalReceitas = totalReceitas + r.getValor();
-                    }
-
-                    for(Despesa d : despesas) {
-                        totalDespesas = totalDespesas + d.getValor();
-                    }
-
+                    double totalReceitas = calcularTotalReceitas(receitas);
+                    double totalDespesas = calcularTotalDespesas(despesas);
                     double saldo = totalReceitas - totalDespesas;
+
                     System.out.println("A receita é de: R$" + totalReceitas);
                     System.out.println("A despesa é de: R$" + totalDespesas);
                     System.out.println("O saldo é de: R$" + saldo);
+                    break;
+                }
+                case 5: {
+                    System.out.println("\n====== CONSULTORIA FINANCEIRA ======");
+                    
+                    if (receitas.isEmpty() && despesas.isEmpty()) {
+                        System.out.println("Cadastre algumas transações primeiro para a análise!");
+                        break;
+                    }
+
+                    double totalReceitas = calcularTotalReceitas(receitas);
+                    double totalDespesas = calcularTotalDespesas(despesas);
+                    double saldo = totalReceitas - totalDespesas;
+
+                    System.out.println("Conectando à API de mercado e analisando sua saúde financeira...");
+                    
+                    
+                    String respostaBruta = Api.enviarComando("");
+                    String precoDolar = Api.extrairTextoDoJson(respostaBruta);
+                    
+                    System.out.println("\n🤖 INSIGHTS DO CONSULTOR FINANCEIRO:");
+                    System.out.println("[Mercado] O Dólar comercial está cotado hoje em R$ " + precoDolar);
+                    System.out.println("-----------------------------------------------------");
+
+                   
+                    if (saldo < 0) {
+                        System.out.println("🚨 STATUS: Seu saldo está NEGATIVO em R$ " + saldo);
+                        System.out.println("Dica: Evite compras internacionais desnecessárias com o dólar a R$ " + precoDolar + ".");
+                        System.out.println("Corte imediatamente gastos supérfluos para equilibrar suas contas.");
+                    } else if (saldo == 0) {
+                        System.out.println("⚠️ STATUS: Seu saldo está zerado (R$ 0.00).");
+                        System.out.println("Dica: Orçamento no limite! Evite qualquer tipo de nova despesa");
+                        System.out.println("e tente economizar pequenos valores para criar uma reserva de segurança.");
+                    } else if (saldo > 0 && saldo < 500) {
+                        System.out.println("👍 STATUS: Saldo positivo moderado de R$ " + saldo);
+                        System.out.println("Dica: Bom começo! Guarde pelo menos 10% desse valor.");
+                        System.out.println("Fique atento às variações de preço do mercado antes de gastar em lazer.");
+                    } else {
+                        System.out.println("💰 STATUS: Excelente! Saldo positivo de R$ " + saldo);
+                        System.out.println("Dica: Ótima saúde financeira! Com esse saldo, você já pode começar");
+                        System.out.println("a estudar sobre investimentos em renda fixa para valorizar seu dinheiro.");
+                    }
+                    System.out.println("-----------------------------------------------------");
                     break;
                 }
                 case 0:
@@ -110,5 +149,22 @@ public class App {
             }
         } while (opcao != 0);
         scanner.close();
+    }
+
+
+    private static double calcularTotalReceitas(ArrayList<Receita> receitas) {
+        double total = 0;
+        for (Receita r : receitas) {
+            total += r.getValor();
+        }
+        return total;
+    }
+
+    private static double calcularTotalDespesas(ArrayList<Despesa> despesas) {
+        double total = 0;
+        for (Despesa d : despesas) {
+            total += d.getValor();
+        }
+        return total;
     }
 }

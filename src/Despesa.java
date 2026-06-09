@@ -7,7 +7,7 @@ public class Despesa extends Transacao implements Relatorio {
     }
 
     // Implementação obrigatória do método definido na interface Relatorio
-    public void ExibirResumo() {
-        System.out.println("Despesa: " + getDescricao() + " | R$" + getValor());
+   public void ExibirResumo() {
+        System.out.println("Receita: " + getDescricao() + " | R$" + getValor() + " | Data: " + getData());
     }
 }

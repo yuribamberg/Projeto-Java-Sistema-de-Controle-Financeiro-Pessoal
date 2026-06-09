@@ -1,3 +1,9 @@
+INTEGRANTES: 
+- Yuri Ivo Luiz Bamberg
+- Miguel José Ribeiro Gomes
+- Davi Fernandes Alves
+- Guilherme Victor Takaki Pyramo
+
 # Sistema de Controle Financeiro Pessoal
 
 Aplicação desenvolvida em Java com execução via terminal, com o objetivo de simular um sistema de controle financeiro pessoal. O sistema permite cadastrar receitas e despesas, listar transações, visualizar relatórios e contar com uma consultoria financeira inteligente integrada a dados de mercado em tempo real.
